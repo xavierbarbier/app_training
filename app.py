@@ -4,7 +4,7 @@ import pandas as pd  ## to convert the input data into a dataframe for giving as
 
 app = Flask(__name__)  ## setting up flask name
 
-model = pickle.load(open("/Diabetes.pkl", "rb"))  ##loading model
+model = pickle.load(open("Diabetes.pkl", "rb"))  ##loading model
 
 
 @app.route('/')             ## Defining main index route
