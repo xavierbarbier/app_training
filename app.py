@@ -31,9 +31,16 @@ app.layout = html.Div([
     
 ])
 
-
-
-
+@app.callback(
+    [dash.dependencies.Output('the-title', 'children'),dash.dependencies.Output('the-body', 'children')],
+    [dash.dependencies.Input('button', 'n_clicks')],
+    [dash.dependencies.State('my-title', 'value'),dash.dependencies.State('my-body', 'value')]    
+def update_title(n_clicks,value):
+    if n_clicks is None:
+        raise PreventUpdate
+    else:
+        return 'Output : {}'.format(value)
+    
 
 if __name__ == '__main__':
     app.run_server(debug=True)
