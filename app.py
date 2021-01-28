@@ -16,14 +16,14 @@ app.layout = html.Div([
     
     html.Div(["Input: ",     
         dcc.Textarea(id='title',
-        placeholder='Enter a title for your question...',
+        value='Enter a title for your question...',
         style={'width': '100%'})]),
     
     html.Br(),
     
     html.Div(["Input: ",     
         dcc.Textarea(id='body',
-        placeholder='Enter a body for your question...',
+        value='Enter a body for your question...',
         style={'width': '100%'})]),
     
     html.Br(),
