@@ -19,7 +19,7 @@ app.layout = html.Div([
     style={'width': '100%'}),
     
     dcc.Textarea(
-        id = 'body'
+    id = 'body'
     placeholder='Enter a body for your question...',
     style={'width': '100%'}),
     
