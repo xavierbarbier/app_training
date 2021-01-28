@@ -27,16 +27,6 @@ app.layout = html.Div([
     
 ])
 
-@app.callback(
-    dash.dependencies.Output(component_id='my-output', component_property='children'),
-    [dash.dependencies.Input('button', 'n_clicks')]
-    [dash.dependencies.State(component_id='my-title', component_property='value')]
-)
-def update_output_div(n_clicks,input_value):
-    if n_clicks is None:
-        raise PreventUpdate
-    else :
-        return 'Output: {}'.format(input_value)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
