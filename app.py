@@ -35,7 +35,7 @@ app.layout = html.Div([
     Output(component_id='the-title', component_property='children'),
     Input(component_id='my-title', component_property='value')
 )
-def update_title(input_value):
+def update_output_div(input_value):
     return 'Output title: {}'.format(input_value)
 
 
