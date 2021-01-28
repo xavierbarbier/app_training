@@ -30,7 +30,7 @@ app.layout = html.Div([
 @app.callback(
     dash.dependencies.Output(component_id='my-output', component_property='children'),
     [dash.dependencies.Input('button', 'n_clicks')]
-    [dash.dependencies.Input(component_id='my-title', component_property='value')]
+    [dash.dependencies.State(component_id='my-title', component_property='value')]
 )
 def update_output_div(input_value):
     if n_clicks is None:
