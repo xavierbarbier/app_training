@@ -21,7 +21,7 @@ app.layout = html.Div([
               dcc.Input(id='my-body', value='initial value', type='text',style={'width': '100%'})]),
     html.Br(),
     
-    html.Button('Submit', id='button'),
+    html.Button('Submit', id='button',n_clicks = 0),
     
     html.Div(id='my-output')
     
@@ -31,8 +31,11 @@ app.layout = html.Div([
     dash.dependencies.Output('my-output', 'children'),
     [dash.dependencies.Input('button', 'n_clicks')],
     [dash.dependencies.State('my-title', 'value')])
-def update_output(value):
-    return 'Output: {}'.format(input_value)
+def update_output(n_clicks,value):
+    if n_clicks is None:
+        raise PreventUpdate
+    else:
+        return 'Output: {}'.format(input_value)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
