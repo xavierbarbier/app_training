@@ -28,14 +28,14 @@ app.layout = html.Div([
 ])
 
 @app.callback(
-    Output('my-output', 'children'),
-    [Input('button', 'n_clicks')],
-    [State('my-title', 'value')])
+    dash.dependencies.Output('my-output', 'children'),
+    [dash.dependencies.Input('button', 'n_clicks')],
+    [dash.dependencies.State('my-title', 'value')])
 def update_output(n_clicks,value):
     if n_clicks is None:
         raise PreventUpdate
     else:
-        return 'Output: {}'.format(input_value)
+        return 'Output: {}'.format(value)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
