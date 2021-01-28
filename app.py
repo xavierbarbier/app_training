@@ -32,7 +32,7 @@ app.layout = html.Div([
     [dash.dependencies.Input('button', 'n_clicks')],
     [dash.dependencies.State('my-title', 'title-value')],
     [dash.dependencies.State('my-body', 'body-value')])
-def update_output(n_clicks,value):
+def update_output(n_clicks,title-value,body-value):
     if n_clicks is None:
         raise PreventUpdate
     else:
