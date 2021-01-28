@@ -14,11 +14,13 @@ app.layout = html.Div([
     html.H2('Hello World'),
     
     dcc.Textarea(
+    id = 'title'
     placeholder='Enter a title for your question...',
     style={'width': '100%'}),
     
     dcc.Textarea(
-    placeholder='Enter a title for your question...',
+        id = 'body'
+    placeholder='Enter a body for your question...',
     style={'width': '100%'}),
     
     html.Button('Submit', id='button'),
@@ -27,9 +29,9 @@ app.layout = html.Div([
 ])
 
 @app.callback(dash.dependencies.Output('display-value', 'children'),
-              [dash.dependencies.Input('dropdown', 'value')])
+              [dash.dependencies.Input('title', 'value')])
 def display_value(value):
-    return 'You have selected "{}"'.format(value)
+    return value
 
 if __name__ == '__main__':
     app.run_server(debug=True)
