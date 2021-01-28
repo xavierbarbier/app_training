@@ -15,13 +15,13 @@ app.layout = html.Div([
     
     dcc.Textarea(
     placeholder='Enter a title for your question...',
-    value='This is a TextArea component',
     style={'width': '100%'}),
     
     dcc.Textarea(
     placeholder='Enter a title for your question...',
-    value='This is a TextArea component',
-    style={'width': '100%'})
+    style={'width': '100%'}),
+    
+    html.Button('Submit', id='button'),
     
     
 ])
