@@ -12,12 +12,18 @@ server = app.server
 
 app.layout = html.Div([
     html.H2('Hello World'),
-    dcc.Dropdown(
-        id='dropdown',
-        options=[{'label': i, 'value': i} for i in ['LA', 'NYC', 'MTL']],
-        value='LA'
-    ),
-    html.Div(id='display-value')
+    
+    dcc.Textarea(
+    placeholder='Enter a title for your question...',
+    value='This is a TextArea component',
+    style={'width': '100%'}),
+    
+    dcc.Textarea(
+    placeholder='Enter a title for your question...',
+    value='This is a TextArea component',
+    style={'width': '100%'})
+    
+    
 ])
 
 @app.callback(dash.dependencies.Output('display-value', 'children'),
