@@ -26,12 +26,16 @@ app.layout = html.Div([
     
     html.Br(),
     
-    html.Div(id='the-title'),
-    html.Div(id='the-body')
+    html.Div(id='my-output')
     
 ])
 
-
+@app.callback(
+    Output(component_id='my-output', component_property='children'),
+    Input(component_id='my-title', component_property='value')
+)
+def update_output_div(input_value):
+    return 'Output: {}'.format(input_value)
 
 
 
