@@ -32,7 +32,7 @@ app.layout = html.Div([
 ])
 
 @app.callback(
-    [dash.dependencies.Output('the-title', 'children'),dash.dependencies.Output('the-body', 'children')],
+    dash.dependencies.Output('the-title', 'children'),dash.dependencies.Output('the-body', 'children'),
     [dash.dependencies.Input('button', 'n_clicks')],
     [dash.dependencies.State('my-title', 'value'),dash.dependencies.State('my-body', 'value')]    
 def update_title(n_clicks,value):
