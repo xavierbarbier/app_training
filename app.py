@@ -38,12 +38,7 @@ app.layout = html.Div([
 def update_title(input_value):
     return 'Output title: {}'.format(input_value)
 
-@app.callback(
-    Output(component_id='the-body', component_property='children'),
-    Input(component_id='my-body', component_property='value')
-)
-def update_body(input_value):
-    return 'Output body: {}'.format(input_value)
+
 
 
     
