@@ -23,7 +23,7 @@ app.layout = html.Div([
 
 @app.callback(
     dash.dependencies.Output(component_id='my-output', component_property='children'),
-    dash.dependencies.Input(component_id='my-input', component_property='value')
+    [dash.dependencies.Input(component_id='my-input', component_property='value')]
 )
 def update_output_div(input_value):
     return 'Output: {}'.format(input_value)
