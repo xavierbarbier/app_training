@@ -14,8 +14,11 @@ server = app.server
 app.layout = html.Div([
     html.H2('Hello World'),
         
-    html.Div(["Input: ",
-              dcc.Input(id='my-input', value='initial value', type='text')]),
+    html.Div(["Title: ",
+              dcc.Input(id='my-title', value='initial value', type='text',style={'width': '100%'})]),
+    html.Br(),
+    html.Div(["Body: ",
+              dcc.Input(id='my-body', value='initial value', type='text',style={'width': '100%'})]),
     html.Br(),
     html.Div(id='my-output')
     
@@ -23,7 +26,7 @@ app.layout = html.Div([
 
 @app.callback(
     dash.dependencies.Output(component_id='my-output', component_property='children'),
-    [dash.dependencies.Input(component_id='my-input', component_property='value')]
+    [dash.dependencies.Input(component_id='my-title', component_property='value')]
 )
 def update_output_div(input_value):
     return 'Output: {}'.format(input_value)
