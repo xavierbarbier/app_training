@@ -42,16 +42,7 @@ def update_title(n_clicks,value):
     else:
         return 'Output title: {}'.format(value)
     
-@app.callback(
-    dash.dependencies.Output('the-body', 'children'),
-    [dash.dependencies.Input('button', 'n_clicks')],
-    
-    [dash.dependencies.State('my-body', 'value')])
-def update_body(n_clicks,value):
-    if n_clicks is None:
-        raise PreventUpdate
-    else:
-        return 'Output body: {}'.format(value)
+
 
 
 if __name__ == '__main__':
