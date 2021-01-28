@@ -32,7 +32,7 @@ app.layout = html.Div([
     [dash.dependencies.Input('button', 'n_clicks')],
     [dash.dependencies.State('my-title', 'value')])
 def update_output(value):
-    return value
+    return 'Output: {}'.format(input_value)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
