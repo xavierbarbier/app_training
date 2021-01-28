@@ -26,20 +26,32 @@ app.layout = html.Div([
     
     html.Button('Submit', id='button',n_clicks = 0),
     
-    html.Div(id='my-output')]
+    html.Div(id='the-title'),
+    html.Div(id='the-body')]
     
 ])
 
 @app.callback(
-    dash.dependencies.Output('my-output', 'children'),
+    dash.dependencies.Output('the-title', 'children'),
     [dash.dependencies.Input('button', 'n_clicks')],
     [dash.dependencies.State('my-title', 'value')],
-    [dash.dependencies.State('my-body', 'value')])
-def update_output(n_clicks,input1, input2):
+    
+def update_output(n_clicks,value):
     if n_clicks is None:
         raise PreventUpdate
     else:
-        return 'Output title: {}, Output body: {}'.format(input1, input2)
+        return 'Output title: {}'.format(value)
+    
+@app.callback(
+    dash.dependencies.Output('the-body', 'children'),
+    [dash.dependencies.Input('button', 'n_clicks')],
+    
+    [dash.dependencies.State('my-body', 'value')])
+def update_output(n_clicks,value):
+    if n_clicks is None:
+        raise PreventUpdate
+    else:
+        return 'Output body: {}'.format(value)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
