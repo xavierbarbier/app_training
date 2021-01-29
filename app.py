@@ -66,10 +66,10 @@ app.layout = html.Div([
 ])
 
 
-@app.callback(Output(component_id='the-title', component_property='children'),
-              Input(component_id='button', component_property='n_clicks'),
-              State(component_id='my-title', component_property='value'),
-              State(component_id='my-body', component_property='value'))
+@app.callback(dash.dependencies.Output(component_id='the-title', component_property='children'),
+              dash.dependencies.Input(component_id='button', component_property='n_clicks'),
+              dash.dependencies.State(component_id='my-title', component_property='value'),
+              dash.dependencies.State(component_id='my-body', component_property='value'))
 def update_output(n_clicks, input1, input2):
     if n_clicks is None:
         raise PreventUpdate
