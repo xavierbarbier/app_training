@@ -15,13 +15,13 @@ import pandas as pd
 from bs4 import BeautifulSoup
 
 # load model and preprocessing
-loaded_model = joblib.load("/content/drive/MyDrive/app/classifier.pkl")
-body_count_vect = joblib.load("/content/drive/MyDrive/app/body_count_vect.pkl")
-title_count_vect = joblib.load("/content/drive/MyDrive/app/title_count_vect.pkl")
-body_Transformer = joblib.load("/content/drive/MyDrive/app/body_Transformer.pkl")
-title_Transformer = joblib.load("/content/drive/MyDrive/app/title_Transformer.pkl")
+loaded_model = joblib.load("classifier.pkl")
+body_count_vect = joblib.load("body_count_vect.pkl")
+title_count_vect = joblib.load("title_count_vect.pkl")
+body_Transformer = joblib.load("body_Transformer.pkl")
+title_Transformer = joblib.load("title_Transformer.pkl")
 
-multilabel_binarizer = joblib.load("/content/drive/MyDrive/app/multilabel_binarizer.pkl")
+multilabel_binarizer = joblib.load("multilabel_binarizer.pkl")
 
 wordnet_lemmatizer = WordNetLemmatizer()
 stops = set(stopwords.words("english")) 
@@ -39,8 +39,6 @@ def text_to_words( raw_text ):
     meaningful_words = [w for w in lemmatized_words if not w in stops]   
 
     return (" ".join( meaningful_words)) 
-
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
