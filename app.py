@@ -17,7 +17,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 
 # load model and preprocessing
-loaded_model = joblib.load("/content/drive/MyDrive/app/classifier.pkl")
+loaded_model = joblib.load("classifier.pkl")
 body_count_vect = joblib.load("classifier.pkl")
 title_count_vect = joblib.load("title_count_vect.pkl")
 body_Transformer = joblib.load("body_Transformer.pkl")
