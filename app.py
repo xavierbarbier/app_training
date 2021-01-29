@@ -1,7 +1,7 @@
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State# Load Data
-from sklearn.externals import joblib
+import joblib
 import nltk
 nltk.download('stopwords')
 from nltk.stem import WordNetLemmatizer
