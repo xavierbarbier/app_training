@@ -15,31 +15,40 @@ app.layout = html.Div([
     html.H2('Hello World'),
         
     html.Div(["Title: ",
-              dcc.Input(id='my-title', value='...', type='text',style={'width': '100%'})]),
-    html.Br(),
+              dcc.Input(id='my-title', type='text',style={'width': '100%'})]),
+    
     
     html.Div(["Body: ",
-              dcc.Input(id='my-body', value='...', type='text',style={'width': '100%'})]),
-    html.Br(),
-       
-    html.Button('Submit', id='button',n_clicks = 0),
+              dcc.Input(id='my-body', type='text',style={'width': '100%', "height": "300px"})]),
     
-    html.Br(),
+       
+    html.Button('Submit', id='button'),
+    
+    
     
     html.Div(id='my-output')
     
 ])
 
-@app.callback(
-    Output(component_id='my-output', component_property='children'),
-    Input(component_id='my-title', component_property='value')
-)
-def update_output_div(input_value):
-    return 'Output: {}'.format(input_value)
 
+@app.callback(Output(component_id='my-output', component_property='children'),
+              Input(component_id='button', component_property='n_clicks'),
+              State(component_id='my-title', component_property='value'),
+              State(component_id='my-body', component_property='value'))
+def update_output(n_clicks, input1, input2):
+    if n_clicks is None:
+        raise PreventUpdate
+    else:
+      #clean title
+      #clean body
+      # preprocess title
 
+      # prepocess body
 
+      # stack inputs
 
+      #predict
+        return str(input1), " ",str(input2)
     
 
 if __name__ == '__main__':
