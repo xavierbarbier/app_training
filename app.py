@@ -47,22 +47,29 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
 app.layout = html.Div([
-    html.H2('Hello World'),
+    html.Div([
+        html.Div([
+            html.Img(src="https://www.ranklogos.com/wp-content/uploads/2015/06/Stack-Overflow-Logo.png",
+             style={ "height": "75px"}),
+            html.H3('Question automatic tagger'),
+            html.H6('By Xavier Barbier - @xavbarbier')
+        ], className="four columns"),
         
-    html.Div(["Title: ",
-              dcc.Input(id='my-title', type='text',style={'width': '100%'})]),
+        html.Div([
+            html.Div(["Title: ",
+              dcc.Input(id='my-title', placeholder="Enter your title here...", type='text',style={'width': '100%'})]),
     
     
-    html.Div(["Body: ",
-              dcc.Input(id='my-body', type='text',style={'width': '100%', "height": "300px"})]),
+            html.Div(["Body: ",
+              dcc.Input(id='my-body', placeholder="Enter your body here...",
+                        type='text',style={'width': '100%', "height": "250px","text-align": "top-left","line-height": "3.5"})]),
     
        
-    html.Button('Submit', id='button'),
+            html.Button('Submit', id='button'),
     
-    
-    
-    html.Div(id='the-title')
-    
+            html.Div(id='the-tags')
+        ], className="six columns"),
+        ], className="row")
 ])
 
 
