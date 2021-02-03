@@ -21,6 +21,10 @@ title_count_vect = joblib.load("title_count_vect.pkl")
 body_Transformer = joblib.load("body_Transformer.pkl")
 title_Transformer = joblib.load("title_Transformer.pkl")
 
+lda_count_vect = joblib.load("lda_count_vect.pkl")
+lda_Transformer = joblib.load("lda_Transformer.pkl")
+lda_model= joblib.load("lda_model.pkl")
+
 multilabel_binarizer = joblib.load("multilabel_binarizer.pkl")
 
 wordnet_lemmatizer = WordNetLemmatizer()
@@ -39,6 +43,17 @@ def text_to_words( raw_text ):
     meaningful_words = [w for w in lemmatized_words if not w in stops]   
 
     return (" ".join( meaningful_words)) 
+
+# preparing topics form LDA
+def save_topics(model, feature_names, no_top_words=4):  
+  for topic_idx, topic in enumerate(model.components_):
+        topix_id = topic_idx
+        lda_tags.append((" ".join([feature_names[i] for i in topic.argsort()[:-no_top_words - 1:-1]])))
+# getting topics
+lda_tags = []
+save_topics(lda_model, lda_count_vect.get_feature_names())
+
+
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -99,7 +114,27 @@ def update_output(n_clicks, input1, input2):
       pred = loaded_model.predict(X)
       # inverse transform
       tags = multilabel_binarizer.inverse_transform(pred)
-      return  "Tag(s): {}".format(tags)
+
+      if len(tags) == 1 :
+        # concat title and body
+        full_text = clean_title + clean_body
+        # body counts
+        full_counts = lda_count_vect.transform([full_text])
+        # title tfidf
+        full_tfidf  = lda_Transformer.transform(full_counts)
+        # prediction
+        pred = lda_model.transform(full_tfidf)
+        prediction = pd.DataFrame()
+        prediction["prob"] = pred.reshape(-1,)
+        prediction["tag"] = lda_tags
+        prediction = prediction.sort_values("prob", ascending=False)
+        prediction.reset_index(inplace=True)
+        tags = prediction["tag"]
+        tags = tags[0].split()
+        return "Tag(s): {}".format(tags)
+
+      else:
+        return  "Tag(s): {}".format(tags)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
