@@ -113,9 +113,14 @@ def update_output(n_clicks, input1, input2):
       #predict
       pred = loaded_model.predict(X)
       # inverse transform
-      tags = multilabel_binarizer.inverse_transform(pred)
+      svm_tags = multilabel_binarizer.inverse_transform(pred)
 
-      if len(tags) == 1 :
+      tags=[]
+      for item in svm_tags:
+          if item!=():
+            tags.append(item)
+      # checking if at least 1 tag is predicted, if not, run LDA 
+      if len(tags) == 0 :
         # concat title and body
         full_text = clean_title + clean_body
         # body counts
@@ -131,9 +136,10 @@ def update_output(n_clicks, input1, input2):
         prediction.reset_index(inplace=True)
         tags = prediction["tag"]
         tags = tags[0].split()
+        
         return "Tag(s): {}".format(tags)
 
-      else:
+      else:      
         return  "Tag(s): {}".format(tags)
 
 if __name__ == '__main__':
