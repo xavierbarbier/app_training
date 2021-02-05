@@ -125,10 +125,8 @@ def update_output(n_clicks, input1, input2):
         full_text = clean_title + clean_body
         # body counts
         full_counts = lda_count_vect.transform([full_text])
-        # title tfidf
-        full_tfidf  = lda_Transformer.transform(full_counts)
         # prediction
-        pred = lda_model.transform(full_tfidf)
+        pred = lda_model.transform(full_counts)
         prediction = pd.DataFrame()
         prediction["prob"] = pred.reshape(-1,)
         prediction["tag"] = lda_tags
