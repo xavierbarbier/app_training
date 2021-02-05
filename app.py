@@ -107,7 +107,7 @@ def update_output(n_clicks, input1, input2):
       # title tfidf
       title_tfidf  = title_Transformer.transform(title_counts)
       # body tfidf
-      body_tfidf  = body_Transformer.transform(title_counts)
+      body_tfidf  = body_Transformer.transform(body_counts)
       # stack inputs
       X = np.hstack([title_tfidf.toarray(),body_tfidf.toarray()])
       #predict
