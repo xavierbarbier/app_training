@@ -1,23 +1,13 @@
 import io
 import dash
-import time
 from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import dash_html_components as html
 import base64
 import tensorflow as tf
-from matplotlib import image
 import tensorflow_hub as hub
-from glob import glob
 import os
 import numpy as np
-from PIL import Image
-import tensorflow as tf
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow import keras
-from matplotlib import pyplot
-import time
-import tensorflow.keras.preprocessing
 
 export_path_keras = "1613379473.h5"
 
