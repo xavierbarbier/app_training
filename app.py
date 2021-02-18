@@ -27,7 +27,11 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
 app.layout = html.Div([
-    dcc.Upload(
+    html.Div([
+        html.Div([
+            html.H3('Dog breed prediction'),
+            html.H6('By Xavier Barbier - @xavbarbier'),
+            dcc.Upload(
         id='upload-image',
         children=html.Div([
             'Drag and Drop or ',
@@ -45,8 +49,13 @@ app.layout = html.Div([
         },
         # Allow multiple files to be uploaded
         multiple=False
-    ),
-    html.Div(id='output-image-upload'),
+    )
+        ], className="four columns"),
+        
+        html.Div([
+            html.Div(id='output-image-upload')
+        ], className="six columns"),
+        ], className="row")
 ])
 
 
