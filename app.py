@@ -37,7 +37,7 @@ app.layout = html.Div([
         dcc.Graph(id="cpts-map2"),
         
         
-    ],className='four columns'),
+    ],className='four columns', style={"height": "100%", "width": "30%"}),
     
     html.Div([
         html.P("Sélectionnez une CPTS:"),
@@ -61,7 +61,7 @@ app.layout = html.Div([
         
         dcc.Graph(id="cpts-chart2"), 
 
-    ],className='six columns')
+    ],className='six columns', style={"height": "100%", "width": "70%"})
     
                         ], className='row')
 
