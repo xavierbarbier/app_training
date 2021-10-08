@@ -76,7 +76,7 @@ def update_bar_chart(c1):
     dff = essonne[mask]
     dff = essonne[mask]
     dff = dff.groupby("cpts").sum().reset_index()
-    dff.drop(["cpts" , "essonne"], axis = 1 , inplace = True)
+    dff.drop(["cpts" , "essonne" , "id", "cpts_code"], axis = 1 , inplace = True)
     dff = dff.T.reset_index()
     dff.columns = ["cpts", c1]
     bar=px.bar(dff, y='cpts', x=c1, color = "cpts", orientation='h')
@@ -98,7 +98,7 @@ def update_bar_chart(c2):
     dff = essonne[mask]
     dff = essonne[mask]
     dff = dff.groupby("cpts").sum().reset_index()
-    dff.drop(["cpts" , "essonne"], axis = 1 , inplace = True)
+    dff.drop(["cpts" , "essonne" , "id", "cpts_code"], axis = 1 , inplace = True)
     dff = dff.T.reset_index()
     dff.columns = ["cpts", c2]
     bar2=px.bar(dff, y='cpts', x=c2, color = "cpts", orientation='h')
