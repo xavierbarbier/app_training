@@ -29,15 +29,15 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 server = app.server
 
-app.layout = html.Div([
+app.layout = html.Div([html.H1("Tableau de suivi CPTS"),
     html.Div([
-        html.H1("Tableau de suivi CPTS"),
+        
         dcc.Graph(id="cpts-map1"),
         
         dcc.Graph(id="cpts-map2"),
         
         
-    ],className='four columns', style={"height": "100%", "width": "30%"}),
+    ],className='four columns', style={"height": "80%", "width": "20%"}),
     
     html.Div([
         html.P("Sélectionnez une CPTS:"),
@@ -61,7 +61,7 @@ app.layout = html.Div([
         
         dcc.Graph(id="cpts-chart2"), 
 
-    ],className='six columns', style={"height": "100%", "width": "70%"})
+    ],className='six columns', style={"height": "80%", "width": "60%"})
     
                         ], className='row')
 
