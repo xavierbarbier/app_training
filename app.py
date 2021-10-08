@@ -1,24 +1,26 @@
-import io
 import dash
-from dash.dependencies import Input, Output, State
-import dash_core_components as dcc
 import dash_html_components as html
-import base64
-import tensorflow as tf
-import tensorflow_hub as hub
-import os
-import numpy as np
+import dash_core_components as dcc
+from dash.dependencies import Output, Input
+import pandas as pd
+import plotly.express as px
+import math
+import json
 
-export_path_keras = "1613379473.h5"
+url = "essonne.csv"
 
-reloaded = tf.keras.models.load_model(
-  export_path_keras, 
-  # `custom_objects` tells keras how to load a `hub.KerasLayer`
-  custom_objects={'KerasLayer': hub.KerasLayer})
+essonne = pd.read_csv(url)
 
-class_names_clean = np.load("class_names_clean.npy")
+url = "essonne_geo.json"
 
-IMAGE_RES = 224
+# Read data from file:
+essonne_geo = json.load( open( url ) )
+
+cpts_list = ['Val d Orge', 'PEPS', 'Val d Essonne et des 2 Vallées',
+       'C\x9cur Santé Orge Yvette', 'Sud Hurepoix', 'Val d Yvette',
+       'Centre Essonne', 'Nord Essonne - Hygie', 'Noé Santé',
+       'Santé Seine Essonne', 'C\x9cur Essonne', 'Val d Yerres',
+       'Val de Seine', 'Sans Cpts']
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -28,60 +30,160 @@ server = app.server
 
 app.layout = html.Div([
     html.Div([
-        html.Div([
-            html.H3('Dog breed prediction'),
-            html.H6('By Xavier Barbier - @xavbarbier'),
-            dcc.Upload(
-        id='upload-image',
-        children=html.Div([
-            'Drag and Drop or ',
-            html.A('Select Files')
-        ]),
-        style={
-            'width': '100%',
-            'height': '60px',
-            'lineHeight': '60px',
-            'borderWidth': '1px',
-            'borderStyle': 'dashed',
-            'borderRadius': '5px',
-            'textAlign': 'center',
-            'margin': '10px'
-        },
-        # Allow multiple files to be uploaded
-        multiple=False
-    )
-        ], className="four columns"),
+        html.H1("Tableau de suivi CPTS"),
+        dcc.Graph(id="cpts-map1"),
         
-        html.Div([
-            html.Div(id='output-image-upload')
-        ], className="six columns"),
-        ], className="row")
-])
+        dcc.Graph(id="cpts-map2"),
+        
+        
+    ],className='four columns'),
+    
+    html.Div([
+        html.P("Sélectionnez une CPTS:"),
+        dcc.Dropdown(
+                        id='cpts1',
+                        value='Toutes',
+                        clearable=True,
+                        options=[
+                            {'label': name, 'value': name}
+                            for name in cpts_list]),
+        
+        dcc.Graph(id="cpts-chart1"),
+        html.P("Sélectionnez une CPTS:"),
+        dcc.Dropdown(
+                        id='cpts2',
+                        value='Toutes',
+                        clearable=True,
+                        options=[
+                            {'label': name, 'value': name}
+                            for name in cpts_list]),
+        
+        dcc.Graph(id="cpts-chart2"), 
+
+    ],className='six columns')
+    
+                        ], className='row')
 
 
-@app.callback(Output('output-image-upload', 'children'),
-              Input('upload-image', 'contents'))
-def update_output(contents):
-    if contents is not None:
-      img = str(contents)
-      encoded_image = str(contents).split(",")[1]
-      decoded_image = base64.b64decode(encoded_image)
-      image = tf.io.decode_image(decoded_image, channels=3, dtype=tf.dtypes.uint8, expand_animations=False)
-      image = tf.image.resize(image, [IMAGE_RES,IMAGE_RES] )/255.0
-      input_arr = keras.preprocessing.image.img_to_array(image)
-      input_arr = np.array([input_arr])
-      predictions = reloaded.predict(input_arr)
-      predicted_ids = np.argmax(predictions, axis=-1)
-      predicted_class_names = class_names_clean[predicted_ids]
-      return html.Div([        
-        html.Img(src=img, width=255),
-        html.Hr(),
-        html.Div('Prediction'),
-        html.Pre(predicted_class_names, style={
-            'whiteSpace': 'pre-wrap',
-            'wordBreak': 'break-all'
-        })
-    ])
+# update bar chart #1
+@app.callback(
+    Output('cpts-chart1','figure'),
+    Input("cpts1",'value'),
+)
+def update_bar_chart(c1):
+    
+    mask = essonne["cpts"] == c1
+    dff = essonne[mask]
+    dff = essonne[mask]
+    dff = dff.groupby("cpts").sum().reset_index()
+    dff.drop(["cpts" , "essonne"], axis = 1 , inplace = True)
+    dff = dff.T.reset_index()
+    dff.columns = ["cpts", c1]
+    bar=px.bar(dff, y='cpts', x=c1, color = "cpts", orientation='h')
+    bar.update_xaxes(showline=True, linewidth=2, linecolor='black')
+    bar.update_yaxes(showline=True, linewidth=2, linecolor='black', color='crimson',title_text='Indicateurs')
+    bar.update_xaxes(range=[0, 200])
+    bar.update_layout(showlegend=False)
+
+    return bar
+
+# update bar chart #2
+@app.callback(
+    Output('cpts-chart2','figure'),
+    Input("cpts2",'value'),
+)
+def update_bar_chart(c2):
+
+    mask = essonne["cpts"] == c2
+    dff = essonne[mask]
+    dff = essonne[mask]
+    dff = dff.groupby("cpts").sum().reset_index()
+    dff.drop(["cpts" , "essonne"], axis = 1 , inplace = True)
+    dff = dff.T.reset_index()
+    dff.columns = ["cpts", c2]
+    bar2=px.bar(dff, y='cpts', x=c2, color = "cpts", orientation='h')
+    bar2.update_xaxes(showline=True, linewidth=2, linecolor='black')
+    bar2.update_yaxes(showline=True, linewidth=2, linecolor='black', color='crimson',title_text='Indicateurs')
+    bar2.update_xaxes(range=[0, 200])
+    bar2.update_layout(showlegend=False)
+    
+    return bar2
+
+# Update map
+
+@app.callback(
+    Output('cpts-map1','figure'),
+    Input("cpts1",'value'),
+)
+def update_map_chart(m1):
+    if m1 == "Toutes" : 
+        fig = px.choropleth(essonne, geojson=essonne_geo, locations = "id", color = "cpts_code",
+                        featureidkey="properties.code",
+                        projection="mercator",hover_data=["nom", "cpts"] )
+
+        fig.update_geos(fitbounds="locations", visible=False)
+        fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+        fig.update_layout(showlegend=False)
+        fig.update_coloraxes(showscale=False)
+    
+        return fig
+    
+    else :
+        focus = essonne.copy()
+        focus.loc[focus["cpts"]!= m1, "cpts_code"] = 99
+        focus["cpts_code"] = focus["cpts_code"].astype("int")
+        focus.sort_values("cpts_code", inplace = True, ascending = False )
+        focus["cpts_code"] = focus["cpts_code"].astype("O")
+        fig = px.choropleth(focus, geojson=essonne_geo, locations = "id", color = "cpts_code",
+                    featureidkey="properties.code",                            
+                    color_discrete_sequence=["white", "green"],
+                    projection="mercator",hover_data=["nom", "cpts"]  )
+
+        fig.update_geos(fitbounds="locations", visible=False)
+        fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+        fig.update_layout(showlegend=False)
+        fig.update_coloraxes(showscale=False)
+        return fig
+    
+
+# Update map02
+
+@app.callback(
+    Output('cpts-map2','figure'),
+    Input("cpts2",'value'),
+)
+def update_map_chart(m2):
+    if m2 == "Toutes" : 
+        map2 = px.choropleth(essonne, geojson=essonne_geo, locations = "id", color = "cpts_code",
+                featureidkey="properties.code",
+            
+                projection="mercator",hover_data=["nom", "cpts"] )
+
+        map2.update_geos(fitbounds="locations", visible=False)
+        map2.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+        map2.update_layout(showlegend=False)
+        map2.update_coloraxes(showscale=False)
+    
+        return map2
+    
+    else :
+        focus = essonne.copy()
+        focus.loc[focus["cpts"]!= m2, "cpts_code"] = 99
+        focus["cpts_code"] = focus["cpts_code"].astype("int")
+        focus.sort_values("cpts_code", inplace = True, ascending = False )
+        focus["cpts_code"] = focus["cpts_code"].astype("O")
+        map2 = px.choropleth(focus, geojson=essonne_geo, locations = "id", color = "cpts_code",
+                    featureidkey="properties.code", 
+                    color_discrete_sequence=["white", "green"],
+                    projection="mercator",hover_data=["nom", "cpts"]  )
+
+        map2.update_geos(fitbounds="locations", visible=False)
+        map2.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+        map2.update_layout(showlegend=False)
+        map2.update_coloraxes(showscale=False)
+        return map2
+
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
