@@ -29,7 +29,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 server = app.server
 
-app.layout = html.Div([html.H1("Tableau de suivi CPTS"),
+app.layout = html.Div([html.H3("Tableau de suivi CPTS"),
     html.Div([
         
         dcc.Graph(id="cpts-map1"),
