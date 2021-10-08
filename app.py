@@ -10,6 +10,7 @@ import json
 url = "essonne.csv"
 
 essonne = pd.read_csv(url)
+essonne.drop("Unnamed: 0", axis = 1 , inplace = True)
 
 url = "essonne_geo.json"
 
