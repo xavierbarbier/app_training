@@ -31,7 +31,7 @@ twitter_candidats = {
                      "Nathalie Arthaud" : "n_arthaud",
                      "Jean-Luc Mélenchon" : "JLMelenchon",
                      "Fabien Roussel" : "Fabien_Roussel",
-                     "Arnaud Montebourg" : "montebourg"
+                     "Arnaud Montebourg" : "montebourg",
                      "Yannick Jadot" :"yjadot" ,
                      "Anne Hidalgo" : "Anne_Hidalgo",
                      "Christiane Taubira" : "@ChTaubira",
