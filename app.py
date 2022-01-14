@@ -11,9 +11,9 @@ from collections import Counter
 from textblob import TextBlob
 from textblob_fr import PatternTagger, PatternAnalyzer
 import nltk
-from nltk.stem import WordNetLemmatizer
-from nltk.corpus import stopwords
-from nltk.util import ngrams
+#from nltk.stem import WordNetLemmatizer
+#from nltk.corpus import stopwords
+#from nltk.util import ngrams
 from bs4 import BeautifulSoup
 import re
 import pandas as pd
