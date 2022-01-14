@@ -1,27 +1,94 @@
+import io
 import dash
-import dash_html_components as html
+from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
-from dash.dependencies import Output, Input
+import dash_html_components as html
+import base64
+import joblib 
+import os
+import numpy as np
+from collections import Counter
+from textblob import TextBlob
+from textblob_fr import PatternTagger, PatternAnalyzer
+import nltk
+nltk.download('stopwords')
+from nltk.stem import WordNetLemmatizer
+nltk.download('wordnet')
+nltk.download('punkt')
+from nltk.corpus import stopwords
+from nltk.util import ngrams
+from bs4 import BeautifulSoup
+import re
 import pandas as pd
 import plotly.express as px
-import math
-import json
+import requests
+import tweepy
+import time
+import matplotlib.pyplot as plt
 
-url = "essonne.csv"
+twitter_candidats = {               
+                     "Philippe Poutou" : "PhilippePoutou",
+                     "Nathalie Arthaud" : "n_arthaud",
+                     "Jean-Luc Mélenchon" : "JLMelenchon",
+                     "Fabien Roussel" : "Fabien_Roussel",
+                     "Arnaud Montebourg" : "montebourg"
+                     "Yannick Jadot" :"yjadot" ,
+                     "Anne Hidalgo" : "Anne_Hidalgo",
+                     "Christiane Taubira" : "@ChTaubira",
+                     "Emmanuel Macron" : "EmmanuelMacron",
+                     "Valérie Pecresse" : "vpecresse",
+                     "Jean Lassalle","jeanlassalle",
+                     "Nicolas Dupont-Aignan" : "dupontaignan",
+                     "Marine Le Pen" : "MLP_officiel",
+                     "Eric Zemmour" : "ZemmourEric"
+                      } 
 
-essonne = pd.read_csv(url)
-essonne.drop("Unnamed: 0", axis = 1 , inplace = True)
+auth = tweepy.OAuthHandler(API_KEY, API_SECRET_KEY)
+# Construct the API instance
+api = tweepy.API(auth)
 
-url = "essonne_geo.json"
+# creating function with previously tested steps
+def text_to_words( raw_text ):
+    wordnet_lemmatizer = WordNetLemmatizer()
+    # Function to convert a raw text to a string of words
+    # The input is a single string (a raw text), and 
+    # the output is a single string (a preprocessed text)
+    
+    text = BeautifulSoup(raw_text).get_text() 
 
-# Read data from file:
-essonne_geo = json.load( open( url ) )
+    text = " ".join(filter(lambda x:x[0]!='@', text.split()))
 
-cpts_list = ['Val d Orge', 'PEPS', 'Val d Essonne et des 2 Vallées',
-       'C\x9cur Santé Orge Yvette', 'Sud Hurepoix', 'Val d Yvette',
-       'Centre Essonne', 'Nord Essonne - Hygie', 'Noé Santé',
-       'Santé Seine Essonne', 'C\x9cur Essonne', 'Val d Yerres',
-       'Val de Seine', 'Sans Cpts']
+    text = " ".join(filter(lambda x:x[0]!='#', text.split()))
+
+    #text = " ".join(filter(lambda x:x[0]!='https://', text.split()))    
+
+    cleanr = re.compile('<.*?>')
+    cleantext = re.sub(cleanr, ' ', text)
+
+    cleanr = re.compile('{.*?}')
+    cleantext = re.sub(cleanr, ' ', cleantext) 
+
+    cleantext = re.sub(r'[^\w\s]',' ',cleantext) 
+
+    cleantext = re.sub(r'http\S+', '', cleantext)   
+
+    cleantext = re.sub(r'co', '', cleantext)  
+
+    words = cleantext.lower().split()        
+
+    lemmatized_words = [wordnet_lemmatizer.lemmatize(w) for w in words] 
+    
+    stops = set(stopwords.words("french"))                  
+    
+    meaningful_words = [w for w in lemmatized_words if not w in stops]   
+   
+    return( " ".join( meaningful_words)) 
+
+
+
+API_KEY = "mgNKxsjIZmT39T9dwIENFP8Q6"
+API_SECRET_KEY = "DSO5Uugz4YezqonmlbM0BDYdlmARsqv2Jn8OPLswoL8mDnuRqx"
+BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAABdKQgEAAAAAkiYc1xJIIJAWs80iUXT31UF5RDU%3DbprET2yBMEtLEJ1sGBRSmT5mq7JETBjpEA9RGWt0slezlTQkpg"
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -29,161 +96,71 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 server = app.server
 
-app.layout = html.Div([html.H3("Tableau de suivi CPTS"),
-    html.Div([
-        
-        dcc.Graph(id="cpts-map1"),
-        
-        dcc.Graph(id="cpts-map2"),
-        
-        
-    ],className='four columns', style={"height": "80%", "width": "20%"}),
-    
-    html.Div([
-        html.P("Sélectionnez une CPTS:"),
+app.layout = html.Div([html.P("Sélectionnez un(e) candidat(e):"),
         dcc.Dropdown(
-                        id='cpts1',
+                        id='candidat',
                         value='Toutes',
                         clearable=True,
                         options=[
                             {'label': name, 'value': name}
-                            for name in cpts_list]),
-        
-        dcc.Graph(id="cpts-chart1"),
-        html.P("Sélectionnez une CPTS:"),
-        dcc.Dropdown(
-                        id='cpts2',
-                        value='Toutes',
-                        clearable=True,
-                        options=[
-                            {'label': name, 'value': name}
-                            for name in cpts_list]),
-        
-        dcc.Graph(id="cpts-chart2"), 
-
-    ],className='six columns', style={"height": "80%", "width": "60%"})
-    
-                        ], className='row')
-
-
+                            for name in twitter_candidats.keys()]),
+        dcc.Graph(id="chart1")
+        dcc.Graph(id="chart2")
+])
 # update bar chart #1
 @app.callback(
-    Output('cpts-chart1','figure'),
-    Input("cpts1",'value'),
+    Output('chart1','figure'),
+    Input("candidat",'value'),
 )
-def update_bar_chart(c1):
+def update_bar_chart(cand):
     
-    mask = essonne["cpts"] == c1
-    dff = essonne[mask]
-    dff = essonne[mask]
-    dff = dff.groupby("cpts").sum().reset_index()
-    dff.drop(["cpts" , "essonne" , "id", "cpts_code"], axis = 1 , inplace = True)
-    dff = dff.T.reset_index()
-    dff.columns = ["cpts", c1]
-    bar=px.bar(dff, y='cpts', x=c1, color = "cpts", orientation='h')
-    bar.update_xaxes(showline=True, linewidth=2, linecolor='black')
-    bar.update_yaxes(showline=True, linewidth=2, linecolor='black', color='crimson',title_text='Indicateurs')
-    bar.update_xaxes(range=[0, 200])
-    bar.update_layout(showlegend=False)
+    tweet = []
+    date = []
 
-    return bar
+    ID = twitter_candidats[str(cand)]
+    list_tweets = api.user_timeline(ID, count = 100)
 
-# update bar chart #2
-@app.callback(
-    Output('cpts-chart2','figure'),
-    Input("cpts2",'value'),
-)
-def update_bar_chart(c2):
+    for t in range(len(list_tweets)):
+      
+      id = list_tweets[t].id
+      status = api.get_status(id, tweet_mode="extended")
+      try:
+          tweet.append(status.retweeted_status.full_text)
+          date.append(status.created_at.strftime('%y-%m-%d'))
+      except AttributeError:  # Not a Retweet
+          tweet.append(status.full_text)
+          date.append(status.created_at.strftime('%y-%m-%d'))
 
-    mask = essonne["cpts"] == c2
-    dff = essonne[mask]
-    dff = essonne[mask]
-    dff = dff.groupby("cpts").sum().reset_index()
-    dff.drop(["cpts" , "essonne" , "id", "cpts_code"], axis = 1 , inplace = True)
-    dff = dff.T.reset_index()
-    dff.columns = ["cpts", c2]
-    bar2=px.bar(dff, y='cpts', x=c2, color = "cpts", orientation='h')
-    bar2.update_xaxes(showline=True, linewidth=2, linecolor='black')
-    bar2.update_yaxes(showline=True, linewidth=2, linecolor='black', color='crimson',title_text='Indicateurs')
-    bar2.update_xaxes(range=[0, 200])
-    bar2.update_layout(showlegend=False)
-    
-    return bar2
+    text = []
+    for t in tweet:
+      text.append(text_to_words(t))
 
-# Update map
+    corpus = ' '.join(text)
 
-@app.callback(
-    Output('cpts-map1','figure'),
-    Input("cpts1",'value'),
-)
-def update_map_chart(m1):
-    if m1 == "Toutes" : 
-        fig = px.choropleth(essonne, geojson=essonne_geo, locations = "id", color = "cpts_code",
-                        featureidkey="properties.code",
-                        projection="mercator",hover_data=["nom", "cpts"] )
-
-        fig.update_geos(fitbounds="locations", visible=False)
-        fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-        fig.update_layout(showlegend=False)
-        fig.update_coloraxes(showscale=False)
-    
-        return fig
-    
-    else :
-        focus = essonne.copy()
-        focus.loc[focus["cpts"]!= m1, "cpts_code"] = 99
-        focus["cpts_code"] = focus["cpts_code"].astype("int")
-        focus.sort_values("cpts_code", inplace = True, ascending = False )
-        focus["cpts_code"] = focus["cpts_code"].astype("O")
-        fig = px.choropleth(focus, geojson=essonne_geo, locations = "id", color = "cpts_code",
-                    featureidkey="properties.code",                            
-                    color_discrete_sequence=["white", "green"],
-                    projection="mercator",hover_data=["nom", "cpts"]  )
-
-        fig.update_geos(fitbounds="locations", visible=False)
-        fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-        fig.update_layout(showlegend=False)
-        fig.update_coloraxes(showscale=False)
-        return fig
+    words = corpus.split()
     
 
-# Update map02
+    fdist1 = nltk.FreqDist(words)
 
-@app.callback(
-    Output('cpts-map2','figure'),
-    Input("cpts2",'value'),
-)
-def update_map_chart(m2):
-    if m2 == "Toutes" : 
-        map2 = px.choropleth(essonne, geojson=essonne_geo, locations = "id", color = "cpts_code",
-                featureidkey="properties.code",
-            
-                projection="mercator",hover_data=["nom", "cpts"] )
+    filtered_word_freq = dict((word, freq) for word, freq in fdist1.items() if not word.isdigit())
 
-        map2.update_geos(fitbounds="locations", visible=False)
-        map2.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-        map2.update_layout(showlegend=False)
-        map2.update_coloraxes(showscale=False)
-    
-        return map2
-    
-    else :
-        focus = essonne.copy()
-        focus.loc[focus["cpts"]!= m2, "cpts_code"] = 99
-        focus["cpts_code"] = focus["cpts_code"].astype("int")
-        focus.sort_values("cpts_code", inplace = True, ascending = False )
-        focus["cpts_code"] = focus["cpts_code"].astype("O")
-        map2 = px.choropleth(focus, geojson=essonne_geo, locations = "id", color = "cpts_code",
-                    featureidkey="properties.code", 
-                    color_discrete_sequence=["white", "green"],
-                    projection="mercator",hover_data=["nom", "cpts"]  )
+    freq = pd.DataFrame.from_dict(filtered_word_freq, orient='index').sort_values(0).tail(25)
+    freq.reset_index(inplace=True)
+    freq.columns = ["Mot", "Quantité"]
 
-        map2.update_geos(fitbounds="locations", visible=False)
-        map2.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-        map2.update_layout(showlegend=False)
-        map2.update_coloraxes(showscale=False)
-        return map2
+    polarity = []
+    for pub in text:
+      polarity.append(TextBlob(pub,pos_tagger=PatternTagger(),analyzer=PatternAnalyzer()).sentiment[0])
 
+    temp = pd.DataFrame({"Date":date,"Sentiment":polarity, "Tweet":tweet})
+
+    fig = px.scatter(temp, x="Date", y="Sentiment",
+                 title='Polarité des sentiments des 100 derniers Tweets (+1: positif | -1: négatif)',
+                 hover_data=["Sentiment", "Tweet"],
+                 color = "Sentiment")
+    fig.update_layout(yaxis_range=[-1,1])
+
+    return fig
 
 
 if __name__ == '__main__':
