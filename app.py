@@ -11,10 +11,7 @@ from collections import Counter
 from textblob import TextBlob
 from textblob_fr import PatternTagger, PatternAnalyzer
 import nltk
-nltk.download('stopwords')
 from nltk.stem import WordNetLemmatizer
-nltk.download('wordnet')
-nltk.download('punkt')
 from nltk.corpus import stopwords
 from nltk.util import ngrams
 from bs4 import BeautifulSoup
