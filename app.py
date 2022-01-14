@@ -102,7 +102,6 @@ app.layout = html.Div([html.P("Sélectionnez un(e) candidat(e):"),
                             {'label': name, 'value': name}
                             for name in twitter_candidats.keys()]),
         dcc.Graph(id="chart1")
-        dcc.Graph(id="chart2")
 ])
 # update bar chart #1
 @app.callback(
