@@ -40,9 +40,7 @@ twitter_candidats = {
                      "Eric Zemmour" : "ZemmourEric"
                       } 
 
-auth = tweepy.OAuthHandler(API_KEY, API_SECRET_KEY)
-# Construct the API instance
-api = tweepy.API(auth)
+
 
 # creating function with previously tested steps
 def text_to_words( raw_text ):
@@ -86,6 +84,10 @@ def text_to_words( raw_text ):
 API_KEY = "mgNKxsjIZmT39T9dwIENFP8Q6"
 API_SECRET_KEY = "DSO5Uugz4YezqonmlbM0BDYdlmARsqv2Jn8OPLswoL8mDnuRqx"
 BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAABdKQgEAAAAAkiYc1xJIIJAWs80iUXT31UF5RDU%3DbprET2yBMEtLEJ1sGBRSmT5mq7JETBjpEA9RGWt0slezlTQkpg"
+
+auth = tweepy.OAuthHandler(API_KEY, API_SECRET_KEY)
+# Construct the API instance
+api = tweepy.API(auth)
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
