@@ -14,11 +14,11 @@ from collections import Counter
 #from nltk.util import ngrams
 #from bs4 import BeautifulSoup
 import re
-"import pandas as pd
+#import pandas as pd
 #import plotly.express as px
 #import requests
 #import tweepy
-"import time
+#import time
 #import matplotlib.pyplot as plt
 
 twitter_candidats = {               
