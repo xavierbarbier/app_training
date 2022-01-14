@@ -8,20 +8,20 @@ import joblib
 import os
 import numpy as np
 from collections import Counter
-from textblob import TextBlob
-from textblob_fr import PatternTagger, PatternAnalyzer
+#from textblob import TextBlob
+#from textblob_fr import PatternTagger, PatternAnalyzer
 import nltk
 #from nltk.stem import WordNetLemmatizer
 #from nltk.corpus import stopwords
 #from nltk.util import ngrams
-from bs4 import BeautifulSoup
+#from bs4 import BeautifulSoup
 import re
-import pandas as pd
-import plotly.express as px
-import requests
-import tweepy
-import time
-import matplotlib.pyplot as plt
+"import pandas as pd
+#import plotly.express as px
+#import requests
+#import tweepy
+"import time
+#import matplotlib.pyplot as plt
 
 twitter_candidats = {               
                      "Philippe Poutou" : "PhilippePoutou",
