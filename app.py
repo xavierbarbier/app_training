@@ -37,7 +37,7 @@ twitter_candidats = {
                      "Christiane Taubira" : "@ChTaubira",
                      "Emmanuel Macron" : "EmmanuelMacron",
                      "Valérie Pecresse" : "vpecresse",
-                     "Jean Lassalle","jeanlassalle",
+                     "Jean Lassalle":"jeanlassalle",
                      "Nicolas Dupont-Aignan" : "dupontaignan",
                      "Marine Le Pen" : "MLP_officiel",
                      "Eric Zemmour" : "ZemmourEric"
