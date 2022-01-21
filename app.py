@@ -12,12 +12,12 @@ import nltk
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.util import ngrams
-#from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup
 import re
 import pandas as pd
 import plotly.express as px
-#import requests
-#import tweepy
+import requests
+import tweepy
 #import time
 
 twitter_candidats = {               
@@ -76,9 +76,9 @@ def text_to_words( raw_text ):
    
     return( " ".join( meaningful_words)) 
 
-*******************************
-API TWITTER
-******************************
+
+#### API TWITTER
+
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
