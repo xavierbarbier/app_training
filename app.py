@@ -100,7 +100,7 @@ app.layout = html.Div([html.P("Sélectionnez un(e) candidat(e):"),
                         options=[
                             {'label': name, 'value': name}
                             for name in twitter_candidats.keys()]),
-        dcc.Graph(id="chart1")
+        html.Div(id='container-button-basic')
 ])
 # update bar chart #1
 @app.callback(
@@ -155,7 +155,7 @@ def update_bar_chart(cand):
                  color = "Sentiment")
     fig.update_layout(yaxis_range=[-1,1])
 
-    return fig
+    return html.Div([dcc.Graph(figure=fig)])
 
 
 if __name__ == '__main__':
