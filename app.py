@@ -12,11 +12,11 @@ import nltk
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.util import ngrams
-#from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup
 import re
 import pandas as pd
 import plotly.express as px
-#import requests
+import requests
 import tweepy
 #import time
 
@@ -28,7 +28,7 @@ twitter_candidats = {
                      "Arnaud Montebourg" : "montebourg",
                      "Yannick Jadot" :"yjadot" ,
                      "Anne Hidalgo" : "Anne_Hidalgo",
-                     "Christiane Taubira" : "@ChTaubira",
+                     "Christiane Taubira" : "ChTaubira",
                      "Emmanuel Macron" : "EmmanuelMacron",
                      "Valérie Pecresse" : "vpecresse",
                      "Jean Lassalle":"jeanlassalle",
