@@ -12,7 +12,7 @@ import nltk
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.util import ngrams
-from bs4 import BeautifulSoup
+#from bs4 import BeautifulSoup
 import re
 import pandas as pd
 import plotly.express as px
