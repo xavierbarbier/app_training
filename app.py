@@ -6,8 +6,8 @@ import base64
 import os
 import numpy as np
 from collections import Counter
-#from textblob import TextBlob
-#from textblob_fr import PatternTagger, PatternAnalyzer
+from textblob import TextBlob
+from textblob_fr import PatternTagger, PatternAnalyzer
 import nltk
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
