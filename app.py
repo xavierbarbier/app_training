@@ -104,7 +104,7 @@ app.layout = html.Div([html.P("Sélectionnez un(e) candidat(e):"),
 ])
 # update bar chart #1
 @app.callback(
-    Output('chart1','figure'),
+    Output('container-button-basic', 'children'),
     Input("candidat",'value'),
 )
 def update_bar_chart(cand):
