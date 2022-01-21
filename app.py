@@ -17,7 +17,7 @@ import re
 import pandas as pd
 import plotly.express as px
 import requests
-import tweepy
+#import tweepy
 #import time
 
 twitter_candidats = {               
