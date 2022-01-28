@@ -162,7 +162,7 @@ def update_bar_chart2(n_clicks , cand):
                                     #since_id=tweet_id,
                             tweet_mode='extended').items()
     for r in replies:
-      if count != 100:
+      if count != 50:
         status = api.get_status(r.id, tweet_mode="extended")
         reponses.append(status.full_text)
         replies_dates.append(status.created_at)
@@ -181,7 +181,7 @@ def update_bar_chart2(n_clicks , cand):
     rep_temp = pd.DataFrame({"Date":replies_dates,"Sentiment":rep_polarity, "Tweet":reponses})
 
     rep_fig = px.scatter(rep_temp, x="Date", y="Sentiment",
-                    title='Polarité des sentiments des 100 dernières réponse (+1: positif | 0: négatif)',
+                    title='Polarité des sentiments des 50 dernières réponse (+1: positif | 0: négatif)',
                     hover_data=["Sentiment", "Tweet"],range_color = [-1,1],
                     color = "Sentiment")
     rep_fig.update_layout(yaxis_range=[-1,1])
