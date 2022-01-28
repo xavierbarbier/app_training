@@ -18,7 +18,6 @@ import pandas as pd
 import plotly.express as px
 import requests
 import tweepy
-from nltk.stem.snowball import FrenchStemmer
 #import time
 
 twitter_candidats = {               
@@ -128,15 +127,7 @@ def update_bar_chart(cand):
     corpus = ' '.join(text)
 
     words = corpus.split()
-    
-
-    fdist1 = nltk.FreqDist(words)
-
-    filtered_word_freq = dict((word, freq) for word, freq in fdist1.items() if not word.isdigit())
-
-    freq = pd.DataFrame.from_dict(filtered_word_freq, orient='index').sort_values(0).tail(25)
-    freq.reset_index(inplace=True)
-    freq.columns = ["Mot", "Quantité"]
+ 
 
     polarity = []
     for pub in text:
