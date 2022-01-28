@@ -98,9 +98,8 @@ app.layout = html.Div([html.H1("Exploration Twitter des candidats(es) à l'élec
 ])
 # update bar chart #1
 @app.callback(
-    Output('container-button-basic', 'children'),
-    Input("candidat",'value'),
-)
+    dash.dependencies.Output('container-button-basic', 'children'),
+    [dash.dependencies.Input("candidat",'value')])
 def update_bar_chart(cand):
     
     tweet = []
