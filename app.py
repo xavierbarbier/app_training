@@ -18,6 +18,7 @@ import pandas as pd
 import plotly.express as px
 import requests
 import tweepy
+from nltk.stem.snowball import FrenchStemmer
 #import time
 
 twitter_candidats = {               
@@ -41,43 +42,34 @@ twitter_candidats = {
 
 # creating function with previously tested steps
 def text_to_words( raw_text ):
-    wordnet_lemmatizer = WordNetLemmatizer()
+    stemmer = FrenchStemmer()
     # Function to convert a raw text to a string of words
     # The input is a single string (a raw text), and 
     # the output is a single string (a preprocessed text)
-    
     text = BeautifulSoup(raw_text).get_text() 
 
     text = " ".join(filter(lambda x:x[0]!='@', text.split()))
 
     text = " ".join(filter(lambda x:x[0]!='#', text.split()))
 
-    #text = " ".join(filter(lambda x:x[0]!='https://', text.split()))    
+    text = re.sub(r'http\S+', '', text)
+    
 
-    cleanr = re.compile('<.*?>')
-    cleantext = re.sub(cleanr, ' ', text)
+    words = text.lower().split()        
 
-    cleanr = re.compile('{.*?}')
-    cleantext = re.sub(cleanr, ' ', cleantext) 
-
-    cleantext = re.sub(r'[^\w\s]',' ',cleantext) 
-
-    cleantext = re.sub(r'http\S+', '', cleantext)   
-
-    cleantext = re.sub(r'co', '', cleantext)  
-
-    words = cleantext.lower().split()        
-
-    lemmatized_words = [wordnet_lemmatizer.lemmatize(w) for w in words] 
+    #lemmatized_words = [stemmer.stem(w) for w in words] 
     
     stops = set(stopwords.words("french"))                  
     
-    meaningful_words = [w for w in lemmatized_words if not w in stops]   
-   
+    meaningful_words = [w for w in words if not w in stops]  
+       
     return( " ".join( meaningful_words)) 
 
 
 #### API TWITTER
+API_KEY = "mgNKxsjIZmT39T9dwIENFP8Q6"
+API_SECRET_KEY = "DSO5Uugz4YezqonmlbM0BDYdlmARsqv2Jn8OPLswoL8mDnuRqx"
+BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAABdKQgEAAAAAkiYc1xJIIJAWs80iUXT31UF5RDU%3DbprET2yBMEtLEJ1sGBRSmT5mq7JETBjpEA9RGWt0slezlTQkpg"
 
 
 auth = tweepy.OAuthHandler(API_KEY, API_SECRET_KEY)
@@ -90,7 +82,12 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 server = app.server
 
-app.layout = html.Div([html.P("Sélectionnez un(e) candidat(e):"),
+app.layout = html.Div([html.H1("Exploration Twitter des candidats(es) à l'élection présidentielle 2022."),
+            dcc.Link("Liste mise à jour le 8/01/2022 à partir de l'article en lien",
+                     target='_blank',
+                      href = "https://www.francetvinfo.fr/politique/christiane-taubira/presidentielle-2022-les-choses-sont-encore-tres-serrees-a-droite-face-a-emmanuel-macron-qui-domine-le-premier-tour-selon-notre-sondage_4909153.html" ),
+            html.Plaintext('By Xavier Barbier - @xavbarbier'),
+            html.P("Sélectionnez un(e) candidat(e):"),
         dcc.Dropdown(
                         id='candidat',
                         value='Toutes',
@@ -119,10 +116,10 @@ def update_bar_chart(cand):
       status = api.get_status(id, tweet_mode="extended")
       try:
           tweet.append(status.retweeted_status.full_text)
-          date.append(status.created_at.strftime('%y-%m-%d'))
+          date.append(status.created_at)
       except AttributeError:  # Not a Retweet
           tweet.append(status.full_text)
-          date.append(status.created_at.strftime('%y-%m-%d'))
+          date.append(status.created_at)
 
     text = []
     for t in tweet:
@@ -149,11 +146,47 @@ def update_bar_chart(cand):
 
     fig = px.scatter(temp, x="Date", y="Sentiment",
                  title='Polarité des sentiments des 100 derniers Tweets (+1: positif | -1: négatif)',
-                 hover_data=["Sentiment", "Tweet"],
+                 hover_data=["Sentiment", "Tweet"],range_color = [-1,1],
                  color = "Sentiment")
     fig.update_layout(yaxis_range=[-1,1])
 
-    return html.Div([dcc.Graph(figure=fig)])
+    # replies
+    reponses = []
+    replies_dates = []
+    count = 0  
+    replies = tweepy.Cursor(api.search, q='to:{}'.format(ID),
+                                    #since_id=tweet_id,
+                            tweet_mode='extended').items()
+    for r in replies:
+      if count != 100:
+        status = api.get_status(r.id, tweet_mode="extended")
+        reponses.append(status.full_text)
+        replies_dates.append(status.created_at)
+        count += 1
+      else:
+        break
+    
+    rep_text = []
+    for t in reponses:
+      rep_text.append(text_to_words(t))
+
+    rep_polarity = []
+    for pub in rep_text:
+      rep_polarity.append(TextBlob(pub,pos_tagger=PatternTagger(),analyzer=PatternAnalyzer()).sentiment[0])
+
+    rep_temp = pd.DataFrame({"Date":replies_dates,"Sentiment":rep_polarity, "Tweet":reponses})
+
+    rep_fig = px.scatter(rep_temp, x="Date", y="Sentiment",
+                    title='Polarité des sentiments des 100 dernières réponse (+1: positif | 0: négatif)',
+                    hover_data=["Sentiment", "Tweet"],range_color = [-1,1],
+                    color = "Sentiment")
+    rep_fig.update_layout(yaxis_range=[-1,1])
+    rep_fig.show()
+
+    return html.Div([dcc.Graph(figure=fig),
+                     dcc.Graph(figure=rep_fig)
+                     ])
+
 
 
 if __name__ == '__main__':
