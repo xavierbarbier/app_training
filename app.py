@@ -184,7 +184,3 @@ def update_bar_chart(cand):
     return html.Div([dcc.Graph(figure=fig),
                      dcc.Graph(figure=rep_fig)
                      ])
-
-
-if __name__ == '__main__':
-    app.run_server(debug=True)
