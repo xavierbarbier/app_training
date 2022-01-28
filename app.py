@@ -93,13 +93,17 @@ app.layout = html.Div([html.H1("Exploration Twitter des candidats(es) à l'élec
                         options=[
                             {'label': name, 'value': name}
                             for name in twitter_candidats.keys()]),
+                       html.Button('Submit', id='submit-val', n_clicks=0),
         html.Div(id='container-button-basic')
 ])
 # update bar chart #1
 @app.callback(
     dash.dependencies.Output('container-button-basic', 'children'),
+  [dash.dependencies.Input('submit-val', 'n_clicks')]
     [dash.dependencies.Input("candidat",'value')])
-def update_bar_chart(cand):
+def update_bar_chart(n_clicks , cand):
+  changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+  if 'submit-val' in changed_id: 
     
     tweet = []
     date = []
@@ -172,7 +176,7 @@ def update_bar_chart(cand):
                     hover_data=["Sentiment", "Tweet"],range_color = [-1,1],
                     color = "Sentiment")
     rep_fig.update_layout(yaxis_range=[-1,1])
-    
+ 
 
     return html.Div([dcc.Graph(figure=fig),
                      dcc.Graph(figure=rep_fig)
