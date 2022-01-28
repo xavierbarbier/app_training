@@ -99,7 +99,7 @@ app.layout = html.Div([html.H1("Exploration Twitter des candidats(es) à l'élec
 # update bar chart #1
 @app.callback(
     dash.dependencies.Output('container-button-basic', 'children'),
-  [dash.dependencies.Input('submit-val', 'n_clicks')]
+  [dash.dependencies.Input('submit-val', 'n_clicks')],
     [dash.dependencies.Input("candidat",'value')])
 def update_bar_chart(n_clicks , cand):
   changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
