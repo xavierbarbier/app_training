@@ -153,7 +153,7 @@ def update_bar_chart(n_clicks , cand):
 def update_bar_chart2(n_clicks , cand):
   changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
   if 'submit-val' in changed_id: 
-    
+    ID = twitter_candidats[str(cand)]
     # replies
     reponses = []
     replies_dates = []
