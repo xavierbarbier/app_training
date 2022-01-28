@@ -127,7 +127,15 @@ def update_bar_chart(cand):
     corpus = ' '.join(text)
 
     words = corpus.split()
- 
+    
+
+    fdist1 = nltk.FreqDist(words)
+
+    filtered_word_freq = dict((word, freq) for word, freq in fdist1.items() if not word.isdigit())
+
+    freq = pd.DataFrame.from_dict(filtered_word_freq, orient='index').sort_values(0).tail(25)
+    freq.reset_index(inplace=True)
+    freq.columns = ["Mot", "Quantité"]
 
     polarity = []
     for pub in text:
@@ -177,7 +185,6 @@ def update_bar_chart(cand):
     return html.Div([dcc.Graph(figure=fig),
                      dcc.Graph(figure=rep_fig)
                      ])
-
 
 
 if __name__ == '__main__':
