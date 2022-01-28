@@ -94,7 +94,8 @@ app.layout = html.Div([html.H1("Exploration Twitter des candidats(es) à l'élec
                             {'label': name, 'value': name}
                             for name in twitter_candidats.keys()]),
                        html.Button('Submit', id='submit-val', n_clicks=0),
-        html.Div(id='container-button-basic')
+        html.Div(id='container-button-basic'),
+                       html.Div(id='container-button-basic2')
 ])
 # update bar chart #1
 @app.callback(
@@ -128,10 +129,7 @@ def update_bar_chart(n_clicks , cand):
 
     corpus = ' '.join(text)
 
-    words = corpus.split()
-    
-
-    
+    words = corpus.split()    
 
     polarity = []
     for pub in text:
@@ -145,6 +143,17 @@ def update_bar_chart(n_clicks , cand):
                  color = "Sentiment")
     fig.update_layout(yaxis_range=[-1,1])
 
+    return html.Div([dcc.Graph(figure=fig)
+                     ])
+# update bar chart #1
+@app.callback(
+    dash.dependencies.Output('container-button-basic2', 'children'),
+  [dash.dependencies.Input('submit-val', 'n_clicks')],
+    [dash.dependencies.Input("candidat",'value')])
+def update_bar_chart2(n_clicks , cand):
+  changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+  if 'submit-val' in changed_id: 
+    
     # replies
     reponses = []
     replies_dates = []
@@ -178,6 +187,5 @@ def update_bar_chart(n_clicks , cand):
     rep_fig.update_layout(yaxis_range=[-1,1])
  
 
-    return html.Div([dcc.Graph(figure=fig),
-                     dcc.Graph(figure=rep_fig)
+    return html.Div([dcc.Graph(figure=rep_fig)
                      ])
