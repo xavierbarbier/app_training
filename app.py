@@ -179,7 +179,7 @@ def update_bar_chart(cand):
                     hover_data=["Sentiment", "Tweet"],range_color = [-1,1],
                     color = "Sentiment")
     rep_fig.update_layout(yaxis_range=[-1,1])
-    rep_fig.show()
+    
 
     return html.Div([dcc.Graph(figure=fig),
                      dcc.Graph(figure=rep_fig)
