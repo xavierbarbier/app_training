@@ -44,7 +44,7 @@ def text_to_words( raw_text ):
     # Function to convert a raw text to a string of words
     # The input is a single string (a raw text), and 
     # the output is a single string (a preprocessed text)
-    text = BeautifulSoup(raw_text).get_text() 
+    text = raw_text
 
     text = " ".join(filter(lambda x:x[0]!='@', text.split()))
 
