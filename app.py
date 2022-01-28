@@ -9,9 +9,9 @@ from collections import Counter
 from textblob import TextBlob
 from textblob_fr import PatternTagger, PatternAnalyzer
 import nltk
-from nltk.stem import WordNetLemmatizer
+
 from nltk.corpus import stopwords
-from nltk.util import ngrams
+
 from bs4 import BeautifulSoup
 import re
 import pandas as pd
@@ -41,7 +41,7 @@ twitter_candidats = {
 
 # creating function with previously tested steps
 def text_to_words( raw_text ):
-    stemmer = FrenchStemmer()
+    
     # Function to convert a raw text to a string of words
     # The input is a single string (a raw text), and 
     # the output is a single string (a preprocessed text)
