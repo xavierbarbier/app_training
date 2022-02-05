@@ -18,15 +18,10 @@ import plotly.express as px
 import requests
 import tweepy
 #import time
-import tensorflow as tf
-from transformers import TFAutoModelForSequenceClassification
-from transformers import AutoTokenizer
+
 import emoji
 
-checkpoint = "camembert-base"
-tokenizer = AutoTokenizer.from_pretrained(checkpoint)
 
-camembert = TFAutoModelForSequenceClassification.from_pretrained("xavierbarbier/camembert-flue")
 
 twitter_candidats = {               
                      "Philippe Poutou" : "PhilippePoutou",
