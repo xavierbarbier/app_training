@@ -194,7 +194,7 @@ def update_bar_chart2(n_clicks , cand):
 
     rep_fig = px.scatter(rep_temp, x="Date", y="Sentiment",size = "size",
                     title='Polarité des sentiments des 50 dernières réponses (+1: positif | 0: négatif)',
-                    hover_data=["Sentiment", "Tweet"],range_color = [0,1],
+                    hover_data=["Sentiment", "Tweet"],range_color = [-1,1],
                     color = "Sentiment")
     rep_fig.update_layout(yaxis_range=[-1,1])
  
