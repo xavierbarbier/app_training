@@ -144,9 +144,8 @@ def update_bar_chart(n_clicks , cand):
 
     polarity = []
     for pub in text:
-      tokenized_test = tokenizer(pub, truncation=True, padding=True, return_tensors="tf")
-      preds = camembert.predict(tokenized_test.data)["logits"]
-      polarity.append(tf.math.softmax(preds, axis=-1).numpy()[0][1])
+     
+      polarity.append(TextBlob(pub,pos_tagger=PatternTagger(),analyzer=PatternAnalyzer()).sentiment[0])
 
     temp = pd.DataFrame({"Date":date,"Sentiment":polarity, "Tweet":tweet})
     size = 3
@@ -191,9 +190,8 @@ def update_bar_chart2(n_clicks , cand):
 
     rep_polarity = []
     for pub in rep_text:
-      tokenized_test = tokenizer(pub, truncation=True, padding=True, return_tensors="tf")
-      preds = camembert.predict(tokenized_test.data)["logits"]
-      rep_polarity.append(tf.math.softmax(preds, axis=-1).numpy()[0][1])
+      
+      rep_polarity.append(TextBlob(pub,pos_tagger=PatternTagger(),analyzer=PatternAnalyzer()).sentiment[0])
 
     rep_temp = pd.DataFrame({"Date":replies_dates,"Sentiment":rep_polarity, "Tweet":reponses})
     size = 3
