@@ -18,6 +18,15 @@ import plotly.express as px
 import requests
 import tweepy
 #import time
+import tensorflow as tf
+from transformers import TFAutoModelForSequenceClassification
+from transformers import AutoTokenizer
+import emoji
+
+checkpoint = "camembert-base"
+tokenizer = AutoTokenizer.from_pretrained(checkpoint)
+
+camembert = TFAutoModelForSequenceClassification.from_pretrained("camembert-flue")
 
 twitter_candidats = {               
                      "Philippe Poutou" : "PhilippePoutou",
@@ -52,6 +61,9 @@ def text_to_words( raw_text ):
 
     text = re.sub(r'http\S+', '', text)
     
+    text = emoji.demojize(text, delimiters=("", ""), language = "fr")
+
+    text = text.replace("_"," ")
 
     words = text.lower().split()        
 
@@ -65,7 +77,9 @@ def text_to_words( raw_text ):
 
 
 #### API TWITTER
-
+API_KEY = "mgNKxsjIZmT39T9dwIENFP8Q6"
+API_SECRET_KEY = "DSO5Uugz4YezqonmlbM0BDYdlmARsqv2Jn8OPLswoL8mDnuRqx"
+BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAABdKQgEAAAAAkiYc1xJIIJAWs80iUXT31UF5RDU%3DbprET2yBMEtLEJ1sGBRSmT5mq7JETBjpEA9RGWt0slezlTQkpg"
 
 
 auth = tweepy.OAuthHandler(API_KEY, API_SECRET_KEY)
@@ -131,11 +145,15 @@ def update_bar_chart(n_clicks , cand):
 
     polarity = []
     for pub in text:
-      polarity.append(TextBlob(pub,pos_tagger=PatternTagger(),analyzer=PatternAnalyzer()).sentiment[0])
+      tokenized_test = tokenizer(pub, truncation=True, padding=True, return_tensors="tf")
+      preds = camembert.predict(tokenized_test.data)["logits"]
+      polarity.append(tf.math.softmax(preds, axis=-1).numpy()[0][1])
 
     temp = pd.DataFrame({"Date":date,"Sentiment":polarity, "Tweet":tweet})
+    size = 3
+    temp["size"] = size
 
-    fig = px.scatter(temp, x="Date", y="Sentiment",
+    fig = px.scatter(temp, x="Date", y="Sentiment",size = "size",
                  title='Polarité des sentiments des 100 derniers Tweets (+1: positif | -1: négatif)',
                  hover_data=["Sentiment", "Tweet"],range_color = [-1,1],
                  color = "Sentiment")
@@ -174,13 +192,17 @@ def update_bar_chart2(n_clicks , cand):
 
     rep_polarity = []
     for pub in rep_text:
-      rep_polarity.append(TextBlob(pub,pos_tagger=PatternTagger(),analyzer=PatternAnalyzer()).sentiment[0])
+      tokenized_test = tokenizer(pub, truncation=True, padding=True, return_tensors="tf")
+      preds = camembert.predict(tokenized_test.data)["logits"]
+      rep_polarity.append(tf.math.softmax(preds, axis=-1).numpy()[0][1])
 
     rep_temp = pd.DataFrame({"Date":replies_dates,"Sentiment":rep_polarity, "Tweet":reponses})
+    size = 3
+    rep_temp["size"] = size
 
-    rep_fig = px.scatter(rep_temp, x="Date", y="Sentiment",
+    rep_fig = px.scatter(rep_temp, x="Date", y="Sentiment",size = "size",
                     title='Polarité des sentiments des 50 dernières réponses (+1: positif | 0: négatif)',
-                    hover_data=["Sentiment", "Tweet"],range_color = [-1,1],
+                    hover_data=["Sentiment", "Tweet"],range_color = [0,1],
                     color = "Sentiment")
     rep_fig.update_layout(yaxis_range=[-1,1])
  
