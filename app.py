@@ -28,7 +28,7 @@ twitter_candidats = {
                      "Nathalie Arthaud" : "n_arthaud",
                      "Jean-Luc Mélenchon" : "JLMelenchon",
                      "Fabien Roussel" : "Fabien_Roussel",
-                     "Arnaud Montebourg" : "montebourg",
+                     "Florian Philippot" : "f_philippot",
                      "Yannick Jadot" :"yjadot" ,
                      "Anne Hidalgo" : "Anne_Hidalgo",
                      "Christiane Taubira" : "ChTaubira",
@@ -37,7 +37,9 @@ twitter_candidats = {
                      "Jean Lassalle":"jeanlassalle",
                      "Nicolas Dupont-Aignan" : "dupontaignan",
                      "Marine Le Pen" : "MLP_officiel",
-                     "Eric Zemmour" : "ZemmourEric"
+                     "Eric Zemmour" : "ZemmourEric",
+                      "François Asselineau" : "UPR_Asselineau",
+                      "Hélène Thouy" : "HeleneThouy"  
                       } 
 
 
@@ -87,9 +89,9 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
 
 app.layout = html.Div([html.H1("Exploration Twitter des candidats(es) à l'élection présidentielle 2022."),
-            dcc.Link("Liste mise à jour le 8/01/2022 à partir de l'article en lien",
+            dcc.Link("Liste mise à jour le 5/02/2022 à partir de l'article en lien",
                      target='_blank',
-                      href = "https://www.francetvinfo.fr/politique/christiane-taubira/presidentielle-2022-les-choses-sont-encore-tres-serrees-a-droite-face-a-emmanuel-macron-qui-domine-le-premier-tour-selon-notre-sondage_4909153.html" ),
+                      href = "https://www.francetvinfo.fr/elections/sondages/derniers-sondages-sur-election-presidentielle-2022-en-france-infographies-explorez-les-tendances-visualisez-les-marges-d-erreur-agregateur_4879975.html" ),
             html.Plaintext('By Xavier Barbier - @xavbarbier'),
             html.P("Sélectionnez un(e) candidat(e):"),
         dcc.Dropdown(
@@ -171,7 +173,7 @@ def update_bar_chart2(n_clicks , cand):
                                     #since_id=tweet_id,
                             tweet_mode='extended').items()
     for r in replies:
-      if count != 50:
+      if count != 60:
         status = api.get_status(r.id, tweet_mode="extended")
         reponses.append(status.full_text)
         replies_dates.append(status.created_at)
@@ -193,7 +195,7 @@ def update_bar_chart2(n_clicks , cand):
     rep_temp["size"] = size
 
     rep_fig = px.scatter(rep_temp, x="Date", y="Sentiment",size = "size",
-                    title='Polarité des sentiments des 50 dernières réponses (+1: positif | 0: négatif)',
+                    title='Polarité des sentiments des 60 dernières réponses (+1: positif | -1: négatif)',
                     hover_data=["Sentiment", "Tweet"],range_color = [-1,1],
                     color = "Sentiment")
     rep_fig.update_layout(yaxis_range=[-1,1])
