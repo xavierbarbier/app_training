@@ -26,7 +26,7 @@ import plotly.express as px
 checkpoint = "camembert-base"
 tokenizer = AutoTokenizer.from_pretrained(checkpoint)
 
-camembert = TFAutoModelForSequenceClassification.from_pretrained("xavierbarbier/camembert-flue")
+camembert = TFAutoModelForSequenceClassification.from_pretrained("https://huggingface.co/xavierbarbier/camembert-flue")
 
 
 
