@@ -1,25 +1,32 @@
+import io
 import dash
 from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import dash_html_components as html
 import base64
+import joblib 
 import os
 import numpy as np
-from textblob import TextBlob
-from textblob_fr import PatternTagger, PatternAnalyzer
+import emoji
 import nltk
-from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.util import ngrams
 from bs4 import BeautifulSoup
 import re
 import pandas as pd
-import plotly.express as px
 import requests
 import tweepy
-#import time
+import time
+import tensorflow as tf
+from tensorflow import keras
+from transformers import TFAutoModelForSequenceClassification
+from transformers import AutoTokenizer
+import plotly.express as px
 
-import emoji
+checkpoint = "camembert-base"
+tokenizer = AutoTokenizer.from_pretrained(checkpoint)
+
+camembert = TFAutoModelForSequenceClassification.from_pretrained("xavierbarbier/camembert-flue")
 
 
 
@@ -50,7 +57,7 @@ def text_to_words( raw_text ):
     # Function to convert a raw text to a string of words
     # The input is a single string (a raw text), and 
     # the output is a single string (a preprocessed text)
-    text = raw_text
+    text = BeautifulSoup(raw_text).get_text() 
 
     text = " ".join(filter(lambda x:x[0]!='@', text.split()))
 
@@ -70,11 +77,13 @@ def text_to_words( raw_text ):
     
     meaningful_words = [w for w in words if not w in stops]  
        
-    return( " ".join( meaningful_words)) 
+    return( " ".join( meaningful_words))
 
 
 #### API TWITTER
-
+API_KEY = "mgNKxsjIZmT39T9dwIENFP8Q6"
+API_SECRET_KEY = "DSO5Uugz4YezqonmlbM0BDYdlmARsqv2Jn8OPLswoL8mDnuRqx"
+BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAABdKQgEAAAAAkiYc1xJIIJAWs80iUXT31UF5RDU%3DbprET2yBMEtLEJ1sGBRSmT5mq7JETBjpEA9RGWt0slezlTQkpg"
 auth = tweepy.OAuthHandler(API_KEY, API_SECRET_KEY)
 # Construct the API instance
 api = tweepy.API(auth)
@@ -138,8 +147,9 @@ def update_bar_chart(n_clicks , cand):
 
     polarity = []
     for pub in text:
-     
-      polarity.append(TextBlob(pub,pos_tagger=PatternTagger(),analyzer=PatternAnalyzer()).sentiment[0])
+      tokenized_text = tokenizer(pub, truncation=True, padding=True, return_tensors="tf")
+      preds = camembert.predict(tokenized_text.data)["logits"]
+      polarity.append(tf.math.softmax(preds, axis=-1).numpy()[0][1])
 
     temp = pd.DataFrame({"Date":date,"Sentiment":polarity, "Tweet":tweet})
     size = 3
@@ -147,9 +157,9 @@ def update_bar_chart(n_clicks , cand):
 
     fig = px.scatter(temp, x="Date", y="Sentiment",size = "size",
                  title='Polarité des sentiments des 100 derniers Tweets (+1: positif | -1: négatif)',
-                 hover_data=["Sentiment", "Tweet"],range_color = [-1,1],
+                 hover_data=["Sentiment", "Tweet"],range_color = [0,1],
                  color = "Sentiment")
-    fig.update_layout(yaxis_range=[-1,1])
+    fig.update_layout(yaxis_range=[0,1])
 
     return html.Div([dcc.Graph(figure=fig)
                      ])
@@ -170,7 +180,7 @@ def update_bar_chart2(n_clicks , cand):
                                     #since_id=tweet_id,
                             tweet_mode='extended').items()
     for r in replies:
-      if count != 60:
+      if count != 50:
         status = api.get_status(r.id, tweet_mode="extended")
         reponses.append(status.full_text)
         replies_dates.append(status.created_at)
@@ -184,18 +194,19 @@ def update_bar_chart2(n_clicks , cand):
 
     rep_polarity = []
     for pub in rep_text:
-      
-      rep_polarity.append(TextBlob(pub,pos_tagger=PatternTagger(),analyzer=PatternAnalyzer()).sentiment[0])
+      tokenized_rep_text = tokenizer(pub, truncation=True, padding=True, return_tensors="tf")
+      preds = camembert.predict(tokenized_rep_text.data)["logits"]
+      rep_polarity.append(tf.math.softmax(preds, axis=-1).numpy()[0][1])
 
     rep_temp = pd.DataFrame({"Date":replies_dates,"Sentiment":rep_polarity, "Tweet":reponses})
     size = 3
     rep_temp["size"] = size
-
+    
     rep_fig = px.scatter(rep_temp, x="Date", y="Sentiment",size = "size",
-                    title='Polarité des sentiments des 60 dernières réponses (+1: positif | -1: négatif)',
-                    hover_data=["Sentiment", "Tweet"],range_color = [-1,1],
+                    title='Polarité des sentiments des 50 dernières réponses (+1: positif | 0: négatif)',
+                    hover_data=["Sentiment", "Tweet"],range_color = [0,1],
                     color = "Sentiment")
-    rep_fig.update_layout(yaxis_range=[-1,1])
+    rep_fig.update_layout(yaxis_range=[0,1])
  
 
     return html.Div([dcc.Graph(figure=rep_fig)
