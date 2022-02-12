@@ -17,7 +17,7 @@ import pandas as pd
 import requests
 import tweepy
 import time
-#import tensorflow as tf
+import tensorflow as tf
 #from tensorflow import keras
 from transformers import TFAutoModelForSequenceClassification
 from transformers import AutoTokenizer
