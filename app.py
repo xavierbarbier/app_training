@@ -17,16 +17,20 @@ import pandas as pd
 import requests
 import tweepy
 import time
-import tensorflow as tf
-from tensorflow import keras
+#import tensorflow as tf
+#from tensorflow import keras
 from transformers import TFAutoModelForSequenceClassification
 from transformers import AutoTokenizer
+from transformers import TextClassificationPipeline
 import plotly.express as px
 
-checkpoint = "camembert-base"
-tokenizer = AutoTokenizer.from_pretrained(checkpoint)
+model_name = "xavierbarbier/camembert-flue"
+tokenizer_name = "camembert-base"
 
-camembert = TFAutoModelForSequenceClassification.from_pretrained("xavierbarbier/camembert-flue")
+
+nlp = TextClassificationPipeline(model=TFAutoModelForSequenceClassification.from_pretrained(model_name),
+                            tokenizer=AutoTokenizer.from_pretrained(tokenizer_name),
+                            return_all_scores = True)
 
 
 
@@ -147,9 +151,8 @@ def update_bar_chart(n_clicks , cand):
 
     polarity = []
     for pub in text:
-      tokenized_text = tokenizer(pub, truncation=True, padding=True, return_tensors="tf")
-      preds = camembert.predict(tokenized_text.data)["logits"]
-      polarity.append(tf.math.softmax(preds, axis=-1).numpy()[0][1])
+      
+      polarity.append(nlp(pub)[0][1]["score"])
 
     temp = pd.DataFrame({"Date":date,"Sentiment":polarity, "Tweet":tweet})
     size = 3
@@ -194,9 +197,8 @@ def update_bar_chart2(n_clicks , cand):
 
     rep_polarity = []
     for pub in rep_text:
-      tokenized_rep_text = tokenizer(pub, truncation=True, padding=True, return_tensors="tf")
-      preds = camembert.predict(tokenized_rep_text.data)["logits"]
-      rep_polarity.append(tf.math.softmax(preds, axis=-1).numpy()[0][1])
+      
+      rep_polarity.append(nlp(pub)[0][1]["score"])
 
     rep_temp = pd.DataFrame({"Date":replies_dates,"Sentiment":rep_polarity, "Tweet":reponses})
     size = 3
