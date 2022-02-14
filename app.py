@@ -156,7 +156,7 @@ def update_bar_chart(n_clicks , cand):
                  title='Polarité des sentiments des 100 derniers Tweets (+1: positif | -1: négatif)',
                  hover_data=["Sentiment", "Tweet"],range_color = [0,1],
                  color = "Sentiment")
-    fig.update_layout(yaxis_range=[0,1])
+    fig.update_layout(yaxis_range=[-1,1])
 
     return html.Div([dcc.Graph(figure=fig)
                      ])
@@ -202,7 +202,7 @@ def update_bar_chart2(n_clicks , cand):
                     title='Polarité des sentiments des 50 dernières réponses (+1: positif | 0: négatif)',
                     hover_data=["Sentiment", "Tweet"],range_color = [0,1],
                     color = "Sentiment")
-    rep_fig.update_layout(yaxis_range=[0,1])
+    rep_fig.update_layout(yaxis_range=[-1,1])
  
 
     return html.Div([dcc.Graph(figure=rep_fig)
