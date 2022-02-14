@@ -16,21 +16,15 @@ import re
 import pandas as pd
 import requests
 import tweepy
-import time
-import tensorflow as tf
+#import time
+#import tensorflow as tf
 #from tensorflow import keras
-from transformers import TFAutoModelForSequenceClassification
-from transformers import AutoTokenizer
-from transformers import TextClassificationPipeline
+#from transformers import TFAutoModelForSequenceClassification
+#from transformers import AutoTokenizer
+#from transformers import TextClassificationPipeline
 import plotly.express as px
-
-model_name = "xavierbarbier/camembert-flue"
-tokenizer_name = "camembert-base"
-
-
-nlp = TextClassificationPipeline(model=TFAutoModelForSequenceClassification.from_pretrained(model_name),
-                            tokenizer=AutoTokenizer.from_pretrained(tokenizer_name),
-                            return_all_scores = True)
+from textblob import TextBlob
+from textblob_fr import PatternTagger, PatternAnalyzer
 
 
 
@@ -85,7 +79,9 @@ def text_to_words( raw_text ):
 
 
 #### API TWITTER
-
+API_KEY = "mgNKxsjIZmT39T9dwIENFP8Q6"
+API_SECRET_KEY = "DSO5Uugz4YezqonmlbM0BDYdlmARsqv2Jn8OPLswoL8mDnuRqx"
+BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAABdKQgEAAAAAkiYc1xJIIJAWs80iUXT31UF5RDU%3DbprET2yBMEtLEJ1sGBRSmT5mq7JETBjpEA9RGWt0slezlTQkpg"
 auth = tweepy.OAuthHandler(API_KEY, API_SECRET_KEY)
 # Construct the API instance
 api = tweepy.API(auth)
@@ -150,7 +146,7 @@ def update_bar_chart(n_clicks , cand):
     polarity = []
     for pub in text:
       
-      polarity.append(nlp(pub)[0][1]["score"])
+      polarity.append(TextBlob(pub,pos_tagger=PatternTagger(),analyzer=PatternAnalyzer()).sentiment[0])
 
     temp = pd.DataFrame({"Date":date,"Sentiment":polarity, "Tweet":tweet})
     size = 3
@@ -196,7 +192,7 @@ def update_bar_chart2(n_clicks , cand):
     rep_polarity = []
     for pub in rep_text:
       
-      rep_polarity.append(nlp(pub)[0][1]["score"])
+      rep_polarity.append(TextBlob(pub,pos_tagger=PatternTagger(),analyzer=PatternAnalyzer()).sentiment[0])
 
     rep_temp = pd.DataFrame({"Date":replies_dates,"Sentiment":rep_polarity, "Tweet":reponses})
     size = 3
