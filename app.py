@@ -35,13 +35,14 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 server = app.server
 
-app.layout = html.Div([html.H1("Exploration Twitter des candidats(es) à l'élection présidentielle 2022."),
-            dcc.Link("Liste mise à jour le 5/02/2022 à partir de l'article en lien",
-                     target='_blank',
-                      href = "https://www.francetvinfo.fr/elections/sondages/derniers-sondages-sur-election-presidentielle-2022-en-france-infographies-explorez-les-tendances-visualisez-les-marges-d-erreur-agregateur_4879975.html" ),
-            html.Plaintext('By Xavier Barbier - @xavbarbier'),
-            html.P("Sélectionnez un(e) candidat(e):"),
-        dcc.Dropdown(
+app.layout = hhtml.Div(
+              [html.H1("Exploration Twitter des candidats(es) à l'élection présidentielle 2022."),
+              dcc.Link("Liste mise à jour le 8/01/2022 à partir de l'article en lien",
+                      target='_blank',
+                      href = "https://www.francetvinfo.fr/politique/christiane-taubira/presidentielle-2022-les-choses-sont-encore-tres-serrees-a-droite-face-a-emmanuel-macron-qui-domine-le-premier-tour-selon-notre-sondage_4909153.html" ),
+              html.Plaintext('By Xavier Barbier - @xavbarbier'),
+              html.P("Sélectionnez un(e) candidat(e):"),
+              dcc.Dropdown(
                         id='candidat',
                         value='Toutes',
                         clearable=True,
@@ -50,7 +51,7 @@ app.layout = html.Div([html.H1("Exploration Twitter des candidats(es) à l'élec
                             for name in candidats]),
                        html.Button('Submit', id='submit-val', n_clicks=0),
         html.Div(id='container-button-basic'),
-                       html.Div(id='container-button-basic2')
+        html.Div(id='container-button-basic2')
 ])
 # update bar chart #1
 @app.callback(
