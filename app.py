@@ -48,65 +48,87 @@ app.layout = html.Div([
   html.Div([
             
       html.Div(id='kcal-output-container'),
-    
-    dcc.Dropdown(
-       np.arange(0,900,1),
-       450,
-       id='kcal-slider',
-          
+
+    dcc.Input(id='kcal-slider',
+              type="number",
+              placeholder=450,
+              min=1,
+              max=900,
+              step=1  
+     
     ),
 
 
     html.Div(id='prot-output-container'),
     
-    dcc.Dropdown(
-       np.arange(0,100,1),
-       50,
+  
+    
+    dcc.Input(
+       type="number",
+              placeholder=50,
+              min=1,
+              max=100,
+              step=1  ,
        id='prot-slider'
         
     ),
     
     html.Div(id='glu-output-container'),
 
-    dcc.Dropdown(
-       np.arange(0,100,1),
-       50,
+    dcc.Input(
+       type="number",
+              placeholder=50,
+              min=1,
+              max=100,
+              step=1  ,
        id='glu-slider'
        
     ),
     
     html.Div(id='sugar-output-container'),
 
-    dcc.Dropdown(
-       np.arange(0,100,1),
-       50,
+    dcc.Input(
+       type="number",
+              placeholder=50,
+              min=1,
+              max=100,
+              step=1  ,
        id='sugar-slider'
 
     ),
 
        html.Div(id='fat-output-container'),
 
-    dcc.Dropdown(
-       np.arange(0,100,1),
-       50,
+    dcc.Input(
+       type="number",
+              placeholder=50,
+              min=1,
+              max=100,
+              step=1  ,
        id='fat-slider'
         
     ),
 
     html.Div(id='sat-output-container'),
 
-    dcc.Dropdown(
-       np.arange(0,100,1),
-       50,
+    dcc.Input(
+       type="number",
+              placeholder=50,
+              min=1,
+              max=100,
+              step=1  ,
        id='sat-slider'
         
     ),
 
     html.Div(id='salt-output-container'),
 
-    dcc.Dropdown(
-       np.arange(0,100,1),
-       50,
+    dcc.Input(
+       type="number",
+              placeholder=50,
+              min=1,
+              max=100,
+              step=1  ,
        id='salt-slider'
     ),
     
